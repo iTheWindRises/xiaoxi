@@ -23,7 +23,7 @@
 		            </a>
 		        </li>
 		        <li class="mui-table-view-cell mui-media">
-		            <a href="javascript:;">
+		            <a id="link_nickname" href="javascript:;">
 		            	<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 		            			style="color: lightgray;margin-left: 3px;"></span>
 		                <span id="span_nickname" class="mui-pull-right" style="color: gray;font-size: 14px;"></span>
@@ -42,7 +42,7 @@
 		            </a>
 		        </li>
 		        <li class="mui-table-view-cell mui-media">
-		            <a href="javascript:;">
+		            <a id="link_myQRCode" href="javascript:;">
 		            	<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 		            			style="color: lightgray;margin-left: 3px;"></span>
 		                <img class="mui-media-object mui-pull-right" src="image/qrcode.png"
@@ -58,7 +58,7 @@
 		        
 		        
 		        <li class="mui-table-view-cell mui-media" style="text-align: center;">
-		            <a href="javascript:;">
+		            <a id="link_logout" href="javascript:;">
 		                <div class="mui-media-body">
 		                    退出登录
 		                </div>
@@ -87,11 +87,34 @@
 				link_myface.addEventListener("tap",function() {
 					mui.openWindow("myface.html","myface.html");
 				});
+				//页面跳转,修改昵称
+				var link_nickname= document.getElementById("link_nickname");
+				link_nickname.addEventListener("tap",function() {
+					mui.openWindow("mynickname.html","mynickname.html");
+				});
+				
+				//页面跳转,查看我的二维码
+				var link_myQRCode= document.getElementById("link_myQRCode");
+				link_myQRCode.addEventListener("tap",function() {
+					mui.openWindow("myQRCode.html","myQRCode.html");
+				});
+				
+				//退出登录
+				var link_logout= document.getElementById("link_logout");
+				link_logout.addEventListener("tap",function() {
+					plus.webview.hide("")
+					mui.openWindow("login.html","login.html");
+				});
+
+				//添加自定义事件刷新头像
+				window.addEventListener("refresh",function() {
+					refreshUserInfo();
+				});
 			});
 			
 			function refreshUserInfo() {
 				var user = app.getUserGlobalInfo();
-				
+				console.log(user.faceImage)
 				if(user != null) {
 					var faceImage = user.faceImage;
 					var nickname = user.nickname;

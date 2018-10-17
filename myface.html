@@ -54,18 +54,50 @@
 					mui("#sheet-myface").popover("toggle");
 				});
 				
+				//添加自定义事件刷新头像
+				window.addEventListener("refresh",function() {
+					refreshFace();
+				});
+				
 				//绑定选择照片的按钮
 				var link_choosePhoto = document.getElementById("link_choosePhoto");
-				link_choosePhoto.addEventListener("tap",function() {
-					mui.openWindow("plugin/v3.1.6/myface-uploader.html","myface-uploader.html");
+				link_choosePhoto.addEventListener("tap", function() {
+					mui.openWindow({
+						url: "plugin/v3.1.6/myface-uploader.html",
+						id:"myface-uploader.html",
+						createNew: true});
 					mui("#sheet-myface").popover("toggle");
 				});
 				
 				//绑定保存照片的按钮
 				var link_savePhoto = document.getElementById("link_savePhoto");
 				link_savePhoto.addEventListener("tap",function() {
-					alert("22");
+					plus.nativeUI.showWaiting("下载中");
+					var user = app.getUserGlobalInfo();
+					var faceImage = user.faceImageBig;
+					console.log(app.ImgserverUrl+faceImage);
+					var dtast = plus.downloader.createDownload(
+						app.ImgserverUrl+faceImage,
+						{},
+						function(downloadFile,status) {
+							plus.nativeUI.closeWaiting();
+							if(status==200) {
+								var tempFile = downloadFile.filename;
+								
+								//通过相册api保存照片到本地相册
+								plus.gallery.save(tempFile,function() {
+									app.showToast("保存图片成功","success");
+								});
+							}else{
+								app.showToast("下载错误","error")
+								console.log("下载错误");
+							}
+						}
+					);
+					//启动下载任务
+					dtast.start();
 				});
+				
 				
 			});
 			
@@ -78,7 +110,7 @@
 				if(user != null) {
 					var faceImage = user.faceImageBig;
 					if(app.isNotNull(faceImage)) {
-						img_my_face.src = app.ImgServerUrl + faceImage;
+						img_my_face.src = app.ImgserverUrl + faceImage;
 					}
 				}
 			}

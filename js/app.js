@@ -6,7 +6,7 @@ window.app = {
 	/**
 	 * 图片服务器地址
 	 */
-	ImgserverUrl:'',
+	ImgserverUrl:'http://10.211.55.10:88/xiaoxi/',
 	/**
 	 * 判断字符串是否为空
 	 * @param {Object} str
@@ -42,6 +42,12 @@ window.app = {
 	getUserGlobalInfo:function() {
 		var userInfoStr = plus.storage.getItem("userInfo");
 		return JSON.parse(userInfoStr);
+	},
+	/**
+	 * 退出登录,移除用户全局对象
+	 */
+	userLogout:function() {
+		plus.storage.removeItem("userInfo");
 	}
 	
 }
