@@ -20,7 +20,7 @@
 <body>
 	<!--程序顶部标题-->
 	<header class="mui-bar mui-bar-nav title">
-	    <h1 class="mui-title title-color">小溪</h1>
+	    <h1 class="mui-title title-color" id="headtitle">小溪</h1>
 	</header>
 
 
@@ -48,20 +48,24 @@
 	<script type="text/javascript" charset="utf-8">
       	var xiaoxiArray = [
 	      	{
-	      		pageId:"xiaoxi-chat.html",
-	      		pageUrl:"xiaoxi-chat.html",
+	      		pageId:"xiaoxi-chatlist.html",
+	      		pageUrl:"xiaoxi-chatlist.html",
+	      		title:"小溪"
 	      	},
 	      	{
 	      		pageId:"xiaoxi-contact.html",
 	      		pageUrl:"xiaoxi-contact.html",
+	      		title:"通讯录"
 	      	},
 	      	{
 	      		pageId:"xiaoxi-find.html",
 	      		pageUrl:"xiaoxi-find.html",
+	      		title:"发现"
 	      	},
 	      	{
 	      		pageId:"xiaoxi-my.html",
 	      		pageUrl:"xiaoxi-my.html",
+	      		title:"我"
 	      	}
       	];
       	
@@ -95,13 +99,26 @@
       			//显示点击的tab选项所对应的页面
       			plus.webview.show(xiaoxiArray[tabindex].pageId,"fade-in",200);
       			
+      			//更改标题
+      			var headtitle = document.getElementById("headtitle");
+      			headtitle.innerHTML=xiaoxiArray[tabindex].title;
+      			
       			for (var i=0;i<xiaoxiArray.length;i++) {
       				if(i != tabindex ) {
       					plus.webview.hide(xiaoxiArray[i].pageId,"fade-out",200);
       				}
       		 	}
       		});
+      		
+      		setTimeout("initData()","1000");
       	});
+      	
+      	function initData() {
+      		var xiaoxi_chatlist= plus.webview.getWebviewById("xiaoxi-chatlist.html");
+      		mui.fire(xiaoxi_chatlist,"refresh");
+      		var xiaoxi_my= plus.webview.getWebviewById("xiaoxi-my.html");
+      		mui.fire(xiaoxi_my,"refresh");
+      	}
     </script>
 </body>
 </html>
