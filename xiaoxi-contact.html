@@ -131,6 +131,7 @@
 			function renderContactPage() {
 				//1.	获取联系人列表
 				var friendList = app.getContactList();
+				
 				//2.循环好友列表,转换为拼音
 				for (var i=0;i<friendList.length;i++) {
 					var friend = friendList[i];
@@ -166,6 +167,24 @@
 				//清空数组方法
 				clearContactArray();
 				
+				//为好友通讯录批量绑定点击事件
+				mui("#contactList").on("tap",".chat-with-friend",function(e) {
+					var friendUserId = this.getAttribute("friendUserId");
+					var friendNickname = this.getAttribute("friendNickname");
+					var friendFaceImage = this.getAttribute("friendFaceImage");
+					//打开聊天子页面
+					mui.openWindow({
+						url:"chatting.html",
+						id:"chatting-"+friendUserId,	//唯一页面标识
+						extras:{
+							friendUserId:friendUserId,
+							friendNickname:friendNickname,
+							friendFaceImage:friendFaceImage
+						}
+					});
+				})
+				
+				
 				
 			}
 			
@@ -183,6 +202,7 @@
 								
 								if (data.status == 200) {
 									var contactList = data.data;
+									console.log(JSON.stringify(contactList))
 									app.setContactList(contactList);
 									
 								}
