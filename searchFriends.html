@@ -16,12 +16,13 @@
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
 			<a id="link_submit_search" class="mui-icon mui-icon-right-nav mui-pull-right" 
 				style="color: white;font-size: 14px;line-height: 25px;">搜索</a>
-			<h1 class="mui-title title-color">添加好友</h1>
+			<h1 class="mui-title title-color">添加朋友</h1>
 		</header>
 
 		<div class="mui-content">
 			<div class="mui-input-row">
-			    <input id="txt_your_friend_username" type="text" class=" mui-input-clear" 
+			    <input id="txt_your_friend_username" 
+			    	type="text" class="mui-input-speech mui-input-clear" 
 			    	placeholder="搜索朋友">
 			</div>
 		</div>
@@ -33,18 +34,18 @@
 
 			mui.plusReady(function() {
 				var user = app.getUserGlobalInfo();
-				var id = user.id;
 				
 				var txt_your_friend_username = document.getElementById("txt_your_friend_username");
-			
 				
-				// 提交事件，修改昵称
+				// 提交事件，搜索朋友
 				var link_submit_search = document.getElementById("link_submit_search");
 				link_submit_search.addEventListener("tap", function() {
-					var frendName = txt_your_friend_username.value;
-					plus.nativeUI.showWaiting("请稍侯...");
-					mui.ajax(app.serverUrl + "/u/search?myUserId="+id +
-						"&friendUsername="+frendName,{
+					
+					var yourFriendUsername = txt_your_friend_username.value;
+					
+					plus.nativeUI.showWaiting("请稍后...");
+					mui.ajax(app.serverUrl + "/u/search?myUserId=" + user.id +
+									"&friendUsername=" + yourFriendUsername, {
 						data:{},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
@@ -55,16 +56,18 @@
 							plus.nativeUI.closeWaiting();
 							
 							if (data.status == 200) {
+								
 								mui.openWindow({
-									url:"searchFriendsResult.html",
-									id:"searchFriendsResult.html",
-									styles:{},
-									extras:{
-										willBeFriend:data.data
+									url: "searchFriendsResult.html",
+									id: "searchFriendsResult.html",
+									styles: {},
+									extras: {
+										willBeFriend: data.data
 									}
 								});
+								
 							} else {
-								app.showToast(data.msg,"error");
+								app.showToast(data.msg, "error");
 							}
 						}
 					});

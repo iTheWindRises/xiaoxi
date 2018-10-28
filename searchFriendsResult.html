@@ -31,7 +31,7 @@
 			<ul class="mui-table-view">
 			    <li class="mui-table-view-cell mui-media" style="padding-top: 10px;">
 			        <a href="javascript:;">
-			            <img id="img_friend_face" class="mui-media-object mui-pull-left" src="css/registLogin/loginFace.jpg" 
+			            <img id="img_friend_face" class="mui-media-object mui-pull-left" src="" 
 			            	style="border-radius: 8%;line-height: 50px;max-width: 50px;height: 50px;">
 			            <div class="mui-media-body">
 			               	<label id="lab_friend_nickname"></label>
@@ -58,25 +58,27 @@
 			mui.plusReady(function(){
 				
 				var meInfo = app.getUserGlobalInfo();
-				//获取上一个页面传入的对象,并给本页面view赋值
+				
+				// 获取上一个页面传入的对象，并且对本页面响应的dom赋值初始化
 				var currnetWebview = plus.webview.currentWebview();
 				var yourFriend = currnetWebview.willBeFriend;
-				console.log(JSON.stringify(yourFriend));
+//				console.log(JSON.stringify(yourFriend));
 				
 				var img_friend_face = document.getElementById("img_friend_face");
 				var lab_friend_nickname = document.getElementById("lab_friend_nickname");
 				var p_friend_username = document.getElementById("p_friend_username");
 				
-				img_friend_face.src = app.ImgserverUrl+ yourFriend.faceImage;
-				lab_friend_nickname.innerHTML=yourFriend.nickname;
-				p_friend_username.innerHTML = "账号:"+yourFriend.username;
+				img_friend_face.src = app.imgServerUrl + yourFriend.faceImage;
+				lab_friend_nickname.innerHTML = yourFriend.nickname;
+				p_friend_username.innerHTML = "小溪号：" + yourFriend.username;
 				
-				//发送添加好友的请求
+				// 发送添加好友的请求
 				var btn_add_friend = document.getElementById("btn_add_friend");
-				btn_add_friend.addEventListener("tap",function() {
+				btn_add_friend.addEventListener("tap", function(){
+					
 					plus.nativeUI.showWaiting("请稍侯...");
-					mui.ajax(app.serverUrl + "/u/addFriend?myUserId="+meInfo.id +
-						"&friendUsername="+yourFriend.username,{
+					mui.ajax(app.serverUrl + "/u/addFriend?myUserId=" + meInfo.id +
+									"&friendUsername=" + yourFriend.username, {
 						data:{},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
@@ -87,20 +89,24 @@
 							plus.nativeUI.closeWaiting();
 							
 							if (data.status == 200) {
-								app.showToast("好友请求已发送","success");
+								
+								app.showToast("好友请求已发送...", "success");
+								
 								mui.openWindow({
-									url:"index.html",
-									id:"index.html"
-								})
+									url: "index.html",
+									id: "index.html"
+								});
 							} else {
-								app.showToast(data.msg,"error");
+								app.showToast(data.msg, "error");
 							}
 						}
 					});
+					
 				});
 				
+				// 绑定返回的函数
 				var btn_back = document.getElementById("btn_back");
-				btn_back.addEventListener("tap",function(){
+				btn_back.addEventListener("tap", function() {
 					mui.back();
 				});
 			});

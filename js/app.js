@@ -1,78 +1,89 @@
 window.app = {
+	
 	/**
-	 * netty服务器地址
+	 * netty服务后端发布的url地址
 	 */
-	nettyServerUrl:'ws://192.168.2.1:8089/ws',
+	nettyServerUrl: 'ws://192.168.2.1:8089/ws',
+	
 	/**
-	 * 后端服务器地址
+	 * 后端服务发布的url地址
 	 */
-	serverUrl:'http://192.168.2.1:8080',
+	serverUrl: 'http://192.168.2.1:8080',
+	
 	/**
-	 * 图片服务器地址
+	 * 图片服务器的url地址
 	 */
-	ImgserverUrl:'http://10.211.55.10:88/xiaoxi/',
+	imgServerUrl: 'http://10.211.55.10:88/xiaoxi/',
+	
 	/**
 	 * 判断字符串是否为空
 	 * @param {Object} str
+	 * true：不为空
+	 * false：为空
 	 */
-	isNotNull :function(str) {
-		if(str != null && str != "" && str != undefined) {
+	isNotNull: function(str) {
+		if (str != null && str != "" && str != undefined) {
 			return true;
 		}
-		
 		return false;
-		
-	},
-	
-	showToast: function(msg,type) {
-		plus.nativeUI.toast(msg,{
-			icon: "image/"+type+".png",
-			verticalAlign:"center"
-		})
 	},
 	
 	/**
-	 * 保存用户全局对象,保存到应用缓存中
+	 * 封装消息提示框，默认mui的不支持居中和自定义icon，所以使用h5+
+	 * @param {Object} msg
+	 * @param {Object} type
+	 */
+	showToast: function(msg, type) {
+		plus.nativeUI.toast(msg, 
+			{icon: "image/" + type + ".png", verticalAlign: "center"})
+	},
+	
+	/**
+	 * 保存用户的全局对象
 	 * @param {Object} user
 	 */
-	setUserGlobalInfo:function(user) {
+	setUserGlobalInfo: function(user) {
 		var userInfoStr = JSON.stringify(user);
-		plus.storage.setItem("userInfo",userInfoStr);
+		plus.storage.setItem("userInfo", userInfoStr);
 	},
+	
 	/**
-	 * 
-	 * 获取用户全局对象
+	 * 获取用户的全局对象
 	 */
-	getUserGlobalInfo:function() {
+	getUserGlobalInfo: function() {
 		var userInfoStr = plus.storage.getItem("userInfo");
 		return JSON.parse(userInfoStr);
 	},
+	
 	/**
-	 * 退出登录,移除用户全局对象
+	 * 登出后，移除用户全局对象
 	 */
-	userLogout:function() {
+	userLogout: function() {
 		plus.storage.removeItem("userInfo");
 	},
 	
 	/**
-	 * 保存用户的通讯录列表
+	 * 保存用户的联系人列表
 	 * @param {Object} contactList
 	 */
 	setContactList: function(contactList) {
 		var contactListStr = JSON.stringify(contactList);
-		plus.storage.setItem("contactList",contactListStr);
+		plus.storage.setItem("contactList", contactListStr);
 	},
+	
 	/**
 	 * 获取本地缓存中的联系人列表
-	 * @param {Object} contactList
 	 */
-	getContactList: function(contactList) {
-		var contactListStr =  plus.storage.getItem("contactList");
-		if(!this.isNotNull(contactListStr)) {
+	getContactList: function() {
+		var contactListStr = plus.storage.getItem("contactList");
+		
+		if (!this.isNotNull(contactListStr)) {
 			return [];
 		}
+		
 		return JSON.parse(contactListStr);
 	},
+	
 	/**
 	 * 根据用户id，从本地的缓存（联系人列表）中获取朋友的信息
 	 * @param {Object} friendId
@@ -96,58 +107,65 @@ window.app = {
 			return null;
 		}
 	},
+	
 	/**
-	 * 用于保存用户的聊天记录
+	 * 保存用户的聊天记录
 	 * @param {Object} myId
 	 * @param {Object} friendId
 	 * @param {Object} msg
-	 * @param {Object} flag	判断本条消息是我发送的还是朋友发送的,1:我 2:朋友
+	 * @param {Object} flag	判断本条消息是我发送的，还是朋友发送的，1:我  2:朋友
 	 */
-	saveUserChatHistory: function(myId,friendId,msg,flag) {
+	saveUserChatHistory: function(myId, friendId, msg, flag) {
 		var me = this;
-		var chatKey = "chat-"+myId+"-"+friendId;
-		//从本地缓存获取聊天记录是否存在
+		var chatKey = "chat-" + myId + "-" + friendId;
+		
+		// 从本地缓存获取聊天记录是否存在
 		var chatHistoryListStr = plus.storage.getItem(chatKey);
 		var chatHistoryList;
 		if (me.isNotNull(chatHistoryListStr)) {
+			// 如果不为空
 			chatHistoryList = JSON.parse(chatHistoryListStr);
-		}else {
+		} else {
+			// 如果为空，赋一个空的list
 			chatHistoryList = [];
 		}
 		
-		//构建聊天记录对象
-		var singleMsg = new me.ChatHistory(myId,friendId,msg,flag);
+		// 构建聊天记录对象
+		var singleMsg = new me.ChatHistory(myId, friendId, msg, flag);
 		
-		//向list中追加msg对象
+		// 向list中追加msg对象
 		chatHistoryList.push(singleMsg);
 		
-		plus.storage.setItem(chatKey,JSON.stringify(chatHistoryList));
-		
+		plus.storage.setItem(chatKey, JSON.stringify(chatHistoryList));
 	},
+	
 	/**
 	 * 获取用户聊天记录
 	 * @param {Object} myId
 	 * @param {Object} friendId
 	 */
-	getUserChatHistory: function(myId,friendId) {
+	getUserChatHistory: function(myId, friendId) {
 		var me = this;
-		var chatKey = "chat-"+myId+"-"+friendId;
-		//从本地缓存获取聊天记录是否存在
+		var chatKey = "chat-" + myId + "-" + friendId;
 		var chatHistoryListStr = plus.storage.getItem(chatKey);
 		var chatHistoryList;
 		if (me.isNotNull(chatHistoryListStr)) {
+			// 如果不为空
 			chatHistoryList = JSON.parse(chatHistoryListStr);
-		}else {
+		} else {
+			// 如果为空，赋一个空的list
 			chatHistoryList = [];
 		}
+		
 		return chatHistoryList;
 	},
+	
 	// 删除我和朋友的聊天记录
 	deleteUserChatHistory: function(myId, friendId) {
 		var chatKey = "chat-" + myId + "-" + friendId;
 		plus.storage.removeItem(chatKey);
 	},
-
+	
 	/**
 	 * 聊天记录的快照，仅仅保存每次和朋友聊天的最后一条消息
 	 * @param {Object} myId
@@ -269,27 +287,28 @@ window.app = {
 			return;
 		}
 	},
+
 	/**
 	 * 和后端的枚举对应
 	 */
-	CONNECT: 1, 		// 第一次(或重连)初始化连接
+	CONNECT: 1, 	// 第一次(或重连)初始化连接
 	CHAT: 2, 		// 聊天消息
 	SIGNED: 3, 		// 消息签收
 	KEEPALIVE: 4, 	// 客户端保持心跳
 	PULL_FRIEND:5,	// 重新拉取好友
 	
 	/**
-	 * 和后端的ChatMsg聊天模型保持一致
+	 * 和后端的 ChatMsg 聊天模型对象保持一致
 	 * @param {Object} senderId
 	 * @param {Object} receiverId
 	 * @param {Object} msg
 	 * @param {Object} msgId
 	 */
-	ChatMsg:function(senderId,receiverId,msg,msgId) {
-		this.senderId=senderId;
-		this.receiverId=receiverId;
-		this.msg=msg;
-		this.msgId=msgId;
+	ChatMsg: function(senderId, receiverId, msg, msgId){
+		this.senderId = senderId;
+		this.receiverId = receiverId;
+		this.msg = msg;
+		this.msgId = msgId;
 	},
 	
 	/**
@@ -303,6 +322,7 @@ window.app = {
 		this.chatMsg = chatMsg;
 		this.extand = extand;
 	},
+	
 	/**
 	 * 单个聊天记录的对象
 	 * @param {Object} myId
@@ -316,6 +336,7 @@ window.app = {
 		this.msg = msg;
 		this.flag = flag;
 	},
+	
 	/**
 	 * 快照对象
 	 * @param {Object} myId

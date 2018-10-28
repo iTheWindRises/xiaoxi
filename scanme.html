@@ -63,10 +63,10 @@
 						mui.alert(result)
 					} else {
 						var friendUsername = content[1];
-						console.log(friendUsername);
+						
 						var user = app.getUserGlobalInfo();
 						
-						plus.nativeUI.showWaiting("请稍侯");
+						plus.nativeUI.showWaiting("请稍侯...");
 						mui.ajax(app.serverUrl + "/u/search?myUserId=" + user.id +
 										"&friendUsername=" + friendUsername, {
 							data:{},
